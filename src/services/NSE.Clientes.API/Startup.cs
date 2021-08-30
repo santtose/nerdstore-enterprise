@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,12 +37,11 @@ namespace NSE.Clientes.API
 
             services.AddSwaggerConfiguration();
 
-            //services.AddMediatR(typeof(Startup));
+            services.AddMediatR(typeof(Startup));
 
             services.RegisterServices();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSwaggerConfiguration();

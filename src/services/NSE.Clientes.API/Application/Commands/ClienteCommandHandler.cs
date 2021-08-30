@@ -8,8 +8,7 @@ using NSE.Core.Messages;
 
 namespace NSE.Clientes.API.Application.Commands
 {
-    public class ClienteCommandHandler : CommandHandler
-        //IRequestHandler<RegistrarClienteCommand, ValidationResult>
+    public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarClienteCommand, ValidationResult>
     {
         private readonly IClienteRepository _clienteRepository;
 
@@ -17,26 +16,26 @@ namespace NSE.Clientes.API.Application.Commands
         {
             _clienteRepository = clienteRepository;
         }
-        
-        //public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
-        //{
-        //    if (!message.EhValido()) return message.ValidationResult;
 
-        //    var cliente = new Cliente(message.Id, message.Nome, message.Email, message.Cpf);
+        public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
+        {
+            if (!message.EhValido()) return message.ValidationResult;
 
-        //    var clienteExistente = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
+            var cliente = new Cliente(message.Id, message.Nome, message.Email, message.Cpf);
 
-        //    if (clienteExistente != null)
-        //    {
-        //        AdicionarErro("Este CPF já está em uso.");
-        //        return ValidationResult;
-        //    }
+            var clienteExistente = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
 
-        //    _clienteRepository.Adicionar(cliente);
+            if (clienteExistente != null)
+            {
+                AdicionarErro("Este CPF já está em uso.");
+                return ValidationResult;
+            }
 
-        //    cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
+            _clienteRepository.Adicionar(cliente);
 
-        //    return await PersistirDados(_clienteRepository.UnitOfWork);
-        //}
+            //cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
+
+            return await PersistirDados(_clienteRepository.UnitOfWork);
+        }
     }
 }
